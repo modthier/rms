@@ -269,6 +269,6 @@ class OrderController extends Controller
 
     public function realtime(){
         $name = Setting::get()->first();
-        return view('order.realtime')->with('name',$name);
+        return view('order.realtime',['metaTitle'=>'قائمة الطلبات'])->with('name',$name);
     }
 }

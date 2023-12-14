@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\ItemType;
+use App\Models\OrderType;
 use Illuminate\Http\Request;
 //use Str;
 class CashierController extends Controller
@@ -22,8 +23,13 @@ class CashierController extends Controller
     	$types = ItemType::has('items')->get();
         $name = Setting::get()->first();
         $payments = Payment::all();
-        //dd(Str::uuid());
-    	return view('cashier.create',['metaTitle' => 'نقطة البيع'])->with(['types'=> $types ,'name' => $name, 'payments' => $payments]);
+        $order_types = OrderType::all();
+    	return view('cashier.create',['metaTitle' => 'نقطة البيع'])->with([
+            'types'=> $types ,
+            'name' => $name,
+            'payments' => $payments,
+            'order_types' => $order_types,
+        ]);
     }
 
 
@@ -94,7 +100,7 @@ class CashierController extends Controller
             $order->total_price = $request->total;
             $order->total_items = $total_quantity;
             $order->payment_id = $request->payment_id;
-            
+            $order->order_type_id = $request->order_type_id;
             
             $order->save();
 

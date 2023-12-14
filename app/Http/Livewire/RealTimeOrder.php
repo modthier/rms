@@ -4,11 +4,10 @@ namespace App\Http\Livewire;
 
 use App\Models\Order;
 use Livewire\Component;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\On; 
 class RealTimeOrder extends Component
 {
-    // use AuthorizesRequests;
+    
     
     protected $listeners = ['orders_list' => 'render','echo:orders,Hello' => 'render'];
     //#[On('echo:orders,Hello')]

@@ -96,7 +96,8 @@
 			<table class="table table-hovered table-lg">
 				<th> اسم المستخدم </th>
 				<th> عدد الاصناف </th>
-        <th> طريقة الدفع </th>
+				<th>  نوع الطلب </th>
+        		<th> طريقة الدفع </th>
 				<th> المجموع </th>
 				<th> التاريخ </th>
 				<th> عمليات </th>
@@ -106,6 +107,9 @@
 						<td>{{ $order->user->name }}</td>
 						<td>
 							{{ $order->total_items }}
+						</td>
+						<td>
+							{{ $order->orderType->name }}
 						</td>
             <td>{{ $order->payment->method }}</td>
 						<td>{{ $order->total_price }}</td>

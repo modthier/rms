@@ -44,15 +44,26 @@
 
 
         {{ csrf_field() }} 
+		<div class="row p-3">
+			<div class="form-group col-lg-6 mb-3 p-2">
+				<label class="mb-2"> طريقة الدفع </label>
+				<select name="payment_id" class="form-control" required>
+					@foreach($payments as $payment)
+					<option value="{{ $payment->id }}">{{ $payment->method }}</option>
+					@endforeach
+				</select>
+			</div>
 
-        <div class="form-group mb-3 p-2">
-        	<label class="mb-2"> طريقة الدفع </label>
-        	<select name="payment_id" class="form-control" required>
-        		@foreach($payments as $payment)
-        		<option value="{{ $payment->id }}">{{ $payment->method }}</option>
-        		@endforeach
-        	</select>
-        </div>
+			<div class="form-group col-lg-6 mb-3 p-2">
+				<label class="mb-2">  نوع الطلب </label>
+				<select name="order_type_id" class="form-control" required>
+					@foreach($order_types as $item)
+					<option value="{{ $item->id }}">{{ $item->name }}</option>
+					@endforeach
+				</select>
+			</div>
+		</div>
+       
         
         <div class="card-body table-responsive p-0">
           <table class="table table-hovered">

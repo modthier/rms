@@ -19,12 +19,14 @@
 					<table class="table table-hovered  table-lg">
 						<th> المجموع </th>
 						<th>عدد الاصناف</th>
+						<th>  نوع الطلب </th>
 						<th> طريقة الدفع </th>
 						<th> عمليات </th>
 						@foreach($orders as $order)
 						<tr>
 							<td>{{ $order->total_price }}</td>
 							<td>{{ $order->total_items }}</td>
+							<td>{{ $order->orderType->name }}</td>
 							<td>{{ $order->payment->method }}</td>
 							<td>
 								<a class="float-right btn btn-success" href="{{ route('cashier.showSales',$order->id) }}">عرض</a>

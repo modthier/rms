@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-      'status' , 'user_id' , 'total_price' , 'total_items'
+      'status' , 'user_id' , 'total_price' , 'total_items','order_type_id'
     ];
 
     public function items()
@@ -44,5 +44,9 @@ class Order extends Model
         return $result;
     }
 
+    public function orderType()
+    {
+    	return $this->belongsTo(OrderType::class);
+    }
 
 }

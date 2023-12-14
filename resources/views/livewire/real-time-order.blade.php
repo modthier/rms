@@ -7,17 +7,20 @@
 				
 				 <div class="card-header d-flex justify-content-between align-items-center">
 				    
-				      <div>
-              <button type="button" data-toggle="collapse" href="#cat_{{ $type->id }}" class="btn btn-primary" aria-expanded="true">
-				       رقم الفاتورة : {{ $type->id }}
-				      </button>
+				      <div class="d-flex align-items-center">
+                  <button type="button" data-toggle="collapse" href="#cat_{{ $type->id }}" class="btn btn-primary" aria-expanded="true">
+                    رقم الفاتورة : {{ $type->id }}
+                  </button>
+                  <div class="mx-2">
+                     نوع الطلب : {{$type->orderType->name}}
+                  </div>
               </div>
-              <div>
-                
-                    <button wire:click="updateOrderStatus('{{$type->id}}')" class="btn btn-primary d-100">تم</button>
-               
-              </div>
-				    </h2>
+                        <div>
+                            
+                                <button wire:click="updateOrderStatus('{{$type->id}}')" class="btn btn-primary d-100">تم</button>
+                        
+                        </div>
+				    
           </div>
 				   <div class="card-body p-0">
            <div id="cat_{{ $type->id }}" class="collapse @if ($loop->first) show @endif">
