@@ -9,6 +9,9 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\OrderMonthyReportExport;
+use App\Exports\OrderWeeklyReportExport;
 
 class OrderController extends Controller
 {
@@ -47,71 +50,41 @@ class OrderController extends Controller
                 ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+   
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
+    
     public function show(Order $order)
     {
         return view('order.show',['metaTitle' => 'تفاصيل المعاملة'])->with('order',$order);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
+   
     public function edit(Order $order)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(Request $request, Order $order)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy(Order $order)
     {
-        $order->items()->detach();
-        $order->delete();
+        
+        $order->update(['returned' => 1]);
 
         return redirect()->route('order.index');
     }
@@ -190,6 +163,10 @@ class OrderController extends Controller
         
     }
 
+    public function exportWeekReport()
+    {
+        return Excel::download(new OrderWeeklyReportExport, 'OrderWeeklyReport.xlsx');
+    }
 
     public function monthlyReport()
     {
@@ -225,7 +202,10 @@ class OrderController extends Controller
                 ]);
     }
 
-
+    public function exporMonthReport()
+    {
+        return Excel::download(new OrderMonthyReportExport, 'OrderMonthyReport.xlsx');
+    }
     public function productReport(Request $request)
     {
         

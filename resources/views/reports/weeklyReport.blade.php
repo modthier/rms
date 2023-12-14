@@ -58,9 +58,12 @@
 
       <div class="col-lg-12">
           <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
               <div class="card-title">
                 <h3 class="mb-3"> مجموع مبيعات  الاسبوع حسب الاصناف </h3>
+              </div>
+              <div>
+                <a href="{{route('order.exportWeekReport')}}" class="btn btn-primary">استخراج التقرير</a>
               </div>
             </div>
             <div class="card-body p-0">

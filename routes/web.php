@@ -70,10 +70,14 @@ Route::get('order/dailyReport', [OrderController::class,'dailyReport'])
 
 Route::get('order/weeklyReport', [OrderController::class,'weeklyReport'])
             ->name('order.weeklyReport');
-
+Route::get('order/exportWeekReport', [OrderController::class,'exportWeekReport'])
+            ->name('order.exportWeekReport');            
+            
 Route::get('order/monthlyReport', [OrderController::class,'monthlyReport'])
             ->name('order.monthlyReport');
-
+Route::get('order/exporMonthReport', [OrderController::class,'exporMonthReport'])
+            ->name('order.exporMonthReport');            
+            
 Route::get('order/productReport', [OrderController::class,'productReport'])
             ->name('order.productReport');
 
