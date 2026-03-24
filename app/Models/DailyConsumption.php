@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class DailyConsumption extends Model
 {
+    protected $casts = [
+        'quantity' => 'decimal:3',
+    ];
+
     public function ingredient()
     {
     	return $this->belongsTo(Ingredient::class);

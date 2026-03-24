@@ -1,6 +1,6 @@
 <nav class="navbar header-top navbar-expand-lg mb-3  navbar-light bg-light">
       <span class="navbar-toggler-icon leftmenutrigger" style="margin-right: 20px;"></span>
-      <h1 class="navbar-brand" style="margin-right: 1em;"> {{ $name->name }} </h1>
+      <h1 class="navbar-brand" style="margin-right: 1em;">{{ ($name ?? null)?->name ?? config('app.name') }}</h1>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>

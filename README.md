@@ -64,3 +64,13 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## App Operations
+
+- Production env template: `.env.production.example`
+- Production deployment runbook: `docs/PRODUCTION_RUNBOOK.md`
+- Health endpoints:
+  - `GET /health/live`
+  - `GET /health/ready`
+- CI workflow:
+  - `.github/workflows/ci.yml`

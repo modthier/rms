@@ -7,21 +7,49 @@ use Illuminate\Http\Request;
 use App\Models\Ingredient;
 use App\Models\ItemType;
 use App\Models\Unit;
+use App\Http\Requests\ItemSearchRequest;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Storage;
-
 
 class ItemController extends Controller
 {
+    /** Cache key for menu items list. */
+    public const MENU_ITEMS_CACHE_KEY = 'menu_items';
+
+    /** Cache TTL: 1 hour. */
+    public const MENU_ITEMS_CACHE_TTL = 3600;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = Item::orderBy('id','desc')->paginate();
+        $collection = Cache::remember(self::MENU_ITEMS_CACHE_KEY, self::MENU_ITEMS_CACHE_TTL, function () {
+            return Item::with(['itemType', 'ingredient', 'unit'])->orderBy('id', 'desc')->get();
+        });
 
-        return view('items.index',['metaTitle' => 'جميع الاصناف'],compact('items'));
+        $page = $request->get('page', 1);
+        $perPage = 15;
+        $items = new LengthAwarePaginator(
+            $collection->forPage($page, $perPage),
+            $collection->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('items.index', ['metaTitle' => 'جميع الاصناف'], compact('items'));
+    }
+
+    /**
+     * Clear menu items cache (call after item create/update/destroy).
+     */
+    protected function clearMenuItemsCache(): void
+    {
+        Cache::forget(self::MENU_ITEMS_CACHE_KEY);
     }
 
     /**
@@ -74,7 +102,8 @@ class ItemController extends Controller
             'ingredient_id' => $request->ingredient_id
         ];
 
-        if($item::create($data)) {
+        if (Item::create($data)) {
+            $this->clearMenuItemsCache();
             $request->session()->flash('success','تم حفظ الصنف بنجاح');
             return redirect()->route('item.index');
         }else {
@@ -122,11 +151,9 @@ class ItemController extends Controller
         $this->validate($request,[
             'name' => 'required',
             'price' => 'required',
-            'weight' => 'required' ,
             'icon' => 'image|max:10000',
             'item_type_id' => 'required',
             'ingredient_id' => 'required',
-            'unit_id' => 'required'
          ]);
 
         if ($request->hasFile('icon')) {
@@ -134,7 +161,7 @@ class ItemController extends Controller
             $icon = uniqid().".".$file->getClientOriginalExtension();
             $file->storeAs('images\items',$icon,'public');
 
-            Storage::disk('items')->delete($item->image);
+            //Storage::disk('items')->delete($item->image);
         }else {
             $icon = $item->icon;
         }
@@ -144,14 +171,15 @@ class ItemController extends Controller
         $data = [
             'name' => $request->name,
             'price' => $request->price,
-            'weight' => $request->weight,
+            
             'icon' => $icon,
             'item_type_id' => $request->item_type_id,
             'ingredient_id' => $request->ingredient_id,
-            'unit_id' => $request->unit_id
+            
         ];
 
-        if($item->update($data)) {
+        if ($item->update($data)) {
+            $this->clearMenuItemsCache();
             $request->session()->flash('success','تم تحديث الصنف بنجاح');
             return redirect()->route('item.index');
         }else {
@@ -168,5 +196,14 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         //
+    }
+
+    function search(ItemSearchRequest $request)  {
+       
+        $result = Item::where('name','like',"%".$request->q."%")->
+                        orWhereHas('itemType',function ($query) use ($request) {
+                            $query->where('type','like',"%".$request->q."%");
+                        })->paginate(20);
+        return view('items.search',['metaTitle' => 'نتيجة البحث'])->with(['items'=> $result]);
     }
 }

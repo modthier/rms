@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+@tailwind components;
+@tailwind utilities;
+
+/* Shell: no Tailwind preflight — CoreUI/Bootstrap stay intact */
+@layer components {
+    #ta-body.ta-shell {
+        @apply relative text-base font-normal z-[1] bg-gray-50 text-gray-800 font-outfit antialiased;
+    }
+
+    .menu-item {
+        @apply relative flex items-center w-full gap-3 px-3 py-2 font-medium rounded-lg text-theme-sm no-underline text-right;
+    }
+
+    .menu-item-active {
+        @apply bg-brand-50 text-brand-600;
+    }
+
+    .menu-item-inactive {
+        @apply text-gray-700 hover:bg-gray-100;
+    }
+
+    .menu-dropdown-item {
+        @apply relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-theme-sm font-medium no-underline text-right;
+    }
+
+    .menu-dropdown-item-active {
+        @apply bg-brand-50 text-brand-600;
+    }
+
+    .menu-dropdown-item-inactive {
+        @apply text-gray-700 hover:bg-gray-100;
+    }
+
+    .ta-nav-details > summary {
+        list-style: none;
+    }
+
+    .ta-nav-details > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .ta-nav-details > summary .ta-chevron {
+        @apply mr-auto transition-transform duration-200 text-gray-400;
+    }
+
+    .ta-nav-details[open] > summary .ta-chevron {
+        @apply rotate-180 text-brand-600;
+    }
+}
+
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        @apply w-1.5 h-1.5;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        @apply rounded-full;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-gray-200 rounded-full;
+    }
+}
+
+/* Sidebar width + collapsed (TailAdmin-style) */
+#ta-sidebar.ta-sidebar {
+    @apply fixed top-0 z-[9999] flex h-screen flex-col border-l border-gray-200 bg-white shadow-theme-sm transition-all duration-300 ease-in-out;
+    right: 0;
+    width: 290px;
+}
+
+#ta-body.ta-sidebar-collapsed #ta-sidebar.ta-sidebar {
+    @apply xl:w-[90px];
+}
+
+#ta-body:not(.ta-sidebar-collapsed) #ta-sidebar.ta-sidebar {
+    @apply xl:w-[290px];
+}
+
+/* Hide labels when collapsed on desktop */
+#ta-body.ta-sidebar-collapsed .ta-sb-label,
+#ta-body.ta-sidebar-collapsed .ta-sb-chevron,
+#ta-body.ta-sidebar-collapsed .ta-nav-section-title {
+    @apply xl:hidden;
+}
+
+/* Logo swap when collapsed (avoid Tailwind hidden vs flex conflict) */
+.ta-sb-logo-icon {
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 1280px) {
+    #ta-body.ta-sidebar-collapsed .ta-sb-logo-full {
+        display: none !important;
+    }
+
+    #ta-body.ta-sidebar-collapsed .ta-sb-logo-icon {
+        display: flex !important;
+    }
+}
+
+#ta-body.ta-sidebar-collapsed .menu-item,
+#ta-body.ta-sidebar-collapsed .ta-nav-details > summary {
+    @apply xl:justify-center xl:px-2;
+}
+
+#ta-body.ta-sidebar-collapsed .ta-nav-sub {
+    @apply xl:hidden;
+}
+
+#ta-body.ta-sidebar-collapsed .ta-brand-row {
+    @apply xl:justify-center;
+}
+
+/* Main column offset (RTL: sidebar on right) */
+#ta-main.ta-main {
+    @apply flex min-h-screen flex-1 flex-col transition-all duration-300 ease-in-out;
+}
+
+#ta-body:not(.ta-sidebar-collapsed) #ta-main.ta-main {
+    @apply xl:mr-[290px];
+}
+
+#ta-body.ta-sidebar-collapsed #ta-main.ta-main {
+    @apply xl:mr-[90px];
+}
+
+/* Mobile: sidebar off-canvas */
+@media (max-width: 1279px) {
+    #ta-sidebar.ta-sidebar {
+        @apply translate-x-full;
+    }
+
+    #ta-body.ta-mobile-sidebar-open #ta-sidebar.ta-sidebar {
+        @apply translate-x-0;
+    }
+}
+
+#ta-backdrop {
+    @apply fixed inset-0 z-[9998] bg-gray-900/40 xl:hidden;
+}

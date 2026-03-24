@@ -39,10 +39,12 @@
 	
 
 	$('body').on('click','.close',function () {
-		console.log('click');
+		
 		$('#printArea').html('');
 		$('#printArea').hide();
 		$('#salesPoint').show();
+		// After receipt: cart is empty — keep حفظ disabled until items are added again.
+		calulate_total();
 
 	});
 	$('body').on('click','.print',function(e){
@@ -62,9 +64,10 @@
     
 	$("#myForm").on("submit", function(event){
 		        event.preventDefault();
+				$('#orderBtn').attr('disabled','disabled');
 		 		$.ajaxSetup({
 					headers:{
-						'X-CSRF-TOKEN':$('meta[name="csrf_token"]').attr('content')
+						'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
 					}
 				});
 		        var formValues= $(this).serialize();
@@ -74,13 +77,46 @@
 					url : '{{ route('cashier.store') }}',
 					type : 'post',
 					data : formValues,
+					dataType: 'html',
 					success:function(result){
+						if (!result || !String(result).trim()) {
+							alert('لم يُرجع الخادم محتوى الإيصال. تحقق من السجلات.');
+							return;
+						}
 						$('#salesPoint').hide();
 						$('.order_list').html('');	
 						$('.total').html('');
 		                $('#total_all').val('');
 		                $('#printArea').show();
 		                $('#printArea').html(result);
+					},
+					error: function(xhr){
+						if (xhr.status === 429) {
+							var message = 'تم إرسال طلبات كثيرة بسرعة. الرجاء الانتظار قليلاً ثم إعادة المحاولة.';
+							if (xhr.responseJSON && xhr.responseJSON.message) {
+								message = xhr.responseJSON.message;
+							}
+							alert(message);
+						} else if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+							var msgs = [];
+							$.each(xhr.responseJSON.errors, function (k, v) {
+								if ($.isArray(v)) { msgs = msgs.concat(v); } else { msgs.push(v); }
+							});
+							alert(msgs.length ? msgs.join('\n') : 'بيانات الطلب غير صالحة.');
+						} else if (xhr.status === 500) {
+							alert('فشل حفظ الطلب على الخادم. حاول مرة أخرى.');
+						} else {
+							alert('حدث خطأ أثناء حفظ الطلب. حاول مرة أخرى.');
+						}
+					},
+					complete: function (xhr, textStatus) {
+						if (textStatus === 'success') {
+							// Successful save clears cart — disable حفظ until new lines exist.
+							calulate_total();
+							return;
+						}
+						// Errors / 429 / etc.: re-enable so cashier can retry.
+						$('#orderBtn').attr('disabled', false);
 					}
 				})
 	});

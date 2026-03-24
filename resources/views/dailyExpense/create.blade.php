@@ -13,11 +13,16 @@
         
         <form class="form" action="{{ route('dailyExpense.store') }}" role="form" autocomplete="off" method="POST">
         	{{ csrf_field() }} 
+           
             <div class="form-group">
-	            <label> المنصرف </label>
-	            <input type="text" class="form-control" name="title"  required>
+              <label> اختر نوع المنصرف  </label>
+              <select class="form-control" name="expense_type_id" required="">
+                  <option></option>
+                  @foreach($expenseTypes as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+              </select>
             </div>
-
             <div class="form-group">
               <label> القيمة </label>
               <input type="number" class="form-control" name="amount"  required>

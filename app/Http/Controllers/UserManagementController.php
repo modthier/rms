@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
+use App\Http\Requests\StoreManagedUserRequest;
+use App\Http\Requests\ResetManagedUserPasswordRequest;
 use Auth;
 use Hash;
 
@@ -12,6 +15,7 @@ class UserManagementController extends Controller
 {
     public function index()
     {
+        Gate::authorize('admin_only');
     	$users = User::orderBy('role_id')->paginate();
         
     	return view('users.index',['metaTitle' => 'قائمة المستحدمين'])
@@ -20,6 +24,7 @@ class UserManagementController extends Controller
 
     public function create()
     {
+        Gate::authorize('admin_only');
     	$roles = Role::all();
     	
     	return view('users.create',['metaTitle' => 'مستخدم جديد'])
@@ -27,25 +32,9 @@ class UserManagementController extends Controller
     }
     
 
-    protected function validator(Request $request)
+    public function store(StoreManagedUserRequest $request)
     {
-        return Validator::make($request, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role_id' => ['required']
-        ]);
-    }
-
-
-    public function store(Request $request)
-    {
-        $this->validate($request,[
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'confirmed'],
-            'role_id' => ['required']
-        ]);
+        Gate::authorize('admin_only');
         $user = new User();
 
         $user->name = $request->name;
@@ -61,6 +50,7 @@ class UserManagementController extends Controller
 
      public function disableUser($id)
     {
+        Gate::authorize('admin_only');
         $user = User::findOrFail($id);
 
 
@@ -87,6 +77,7 @@ class UserManagementController extends Controller
 
     public function enableUser($id)
     {
+        Gate::authorize('admin_only');
         $user = User::findOrFail($id);
 
 
@@ -119,17 +110,14 @@ class UserManagementController extends Controller
 
     public function resetPasswordForm($id)
     {
+        Gate::authorize('admin_only');
         $user = User::findOrFail($id);
         return view('users.resetPassword',['metaTitle' => 'تحديث كلمة المرور'])->with('user',$user);
     }
 
-    public function resetPassword(Request $request,$id)
+    public function resetPassword(ResetManagedUserPasswordRequest $request,$id)
     {
-
-        $this->validate($request,[
-            'password' => ['required', 'string', 'min:8'],
-            'confirm_password' => ['required','string', 'min:8']
-        ]);
+        Gate::authorize('admin_only');
 
         $user = User::findOrFail($id);
         
@@ -156,12 +144,6 @@ class UserManagementController extends Controller
             return redirect()->route('management.index');
         }
         
-
-
-        }else {
-            $request->session()->flash('error','كلمة المرور الجديدة وتأكيد كلمة المرور غير متطابقين');
-            return  redirect()->route('management.resetPasswordForm',$user->id);
         }
-       
     }
 }

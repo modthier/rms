@@ -66,7 +66,7 @@ class AdvanceController extends Controller
         ];
         
 
-        if ($advance->update($data)) {
+        if (Advance::create($data)) {
             $request->session()->flash('success','تم تحديث السلفية بنجاح');
             return redirect()->route('advance.index');
         }else {

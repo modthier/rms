@@ -25,7 +25,7 @@
 
                 @foreach($dailyExpenses as $dailyExpense)
                 <tr>
-                    <td>{{ $dailyExpense->title }}</td>
+                    <td>@if($dailyExpense->expenseType){{ $dailyExpense->expenseType->name }}@endif</td>
                     <td>{{ $dailyExpense->amount }}</td>
                     <td>{{ $dailyExpense->user->name }}</td>
                     <td>{{ $dailyExpense->created_at }}</td>
@@ -38,22 +38,7 @@
                               
                         </a>
 
-                        <a href="#"  onclick="event.preventDefault();
-                          var r = confirm('هل انت متاكد ؟');
-                                if (r == true) {document.getElementById('delete_exp_{{ $dailyExpense->id }}').submit();}">
-                                <svg style="width: 30px; height: 30px;">
-                              	<use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-trash') }}"></use>
-                               </svg>
-                        </a>
-
-						<form style="display: none;" action="{{ route('dailyExpense.destroy',$dailyExpense->id) }}"
-		                       method="post" id="delete_exp_{{ $dailyExpense->id }}" class="float-right mr-1">
-		                        @csrf
-
-		                        {{ method_field('DELETE') }}
-
-		                         
-		               </form>
+                        
                     </td>
                 </tr>
                 @endforeach

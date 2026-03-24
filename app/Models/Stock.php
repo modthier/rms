@@ -10,6 +10,12 @@ class Stock extends Model
          'total_price' , 'quantity' , 'ingredient_id' ,'unit_id' , 'unit_price'
     ];
 
+    protected $casts = [
+        'total_price' => 'decimal:2',
+        'unit_price' => 'decimal:2',
+        'quantity' => 'decimal:3',
+    ];
+
     public function ingredient()
     {
     	return $this->belongsTo(Ingredient::class);
@@ -24,7 +30,9 @@ class Stock extends Model
 
     public function purchaseOrder()
     {
-        return $this->hasOne(PurchaseOrders::class);
+        return $this->belongsToMany(PurchaseOrders::class,'purchase_items','stock_id','purchase_id') 
+        ->withPivot(['quantity','subtotal','stock_id','ingredient_id','unit_id'])
+        ->withTimestamps();   
     }
 
 

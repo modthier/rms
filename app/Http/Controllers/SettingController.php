@@ -38,6 +38,7 @@ class SettingController extends Controller
         $setting->name = $request->name;
 
         if ($setting->save()) {
+            Setting::clearCache();
             $request->session()->flash('success','تم حفظ اسم المطعم بنجاح');
             return redirect()->route('setting.index');
         }else {
@@ -56,7 +57,7 @@ class SettingController extends Controller
     public function edit(Setting $setting)
     {
         
-        return view('setting.edit',['metaTitle' => 'تحديث اسم المطعم'])->with('setting',$setting::get()->first());
+        return view('setting.edit',['metaTitle' => 'تحديث اسم المطعم'])->with('setting',$setting);
     }
 
     /**
@@ -78,6 +79,7 @@ class SettingController extends Controller
         
 
         if ($setting->save()) {
+            Setting::clearCache();
             $request->session()->flash('success','تم تحديث اسم المطعم بنجاح');
             return redirect()->route('setting.index');
         }else {

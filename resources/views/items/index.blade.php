@@ -2,6 +2,29 @@
 
 @section('content')
 
+      <div class="col-lg-12">
+  	<div class="card">
+  			<div class="card-header">
+  					بحث في المنتجات 
+			</div>
+  			<div class="card-body p-2">
+  					<form action="{{ route('item.search') }}" method="get">
+              <div class="row">
+              	  <div class="col-lg-12">
+              	  	 <div class="form-group">
+                          <label> اسم المنتج  </label>
+                          <input type="text" class="form-control" name="q" required>
+                      </div>
+              	  </div>
+              </div>
+
+              <div class="form-group">
+                  <input type="submit" value="بحث" class="btn btn-success btn-lg">
+              </div>
+          </form>
+  			</div>
+  	</div>
+ 
 <div class="card">
     <div class="card-header">
         <div class="card-title float-right">
@@ -32,7 +55,7 @@
                     <td>{{ number_format($item->price,2) }}</td>
                    
                     <td>{{ $item->itemType->type }}</td>
-                    <td>{{ $item->ingredient->ingredient }}</td>
+                    <td>{{ $item->ingredient?->ingredient ?? '—' }}</td>
                     <td><img class="img-fluid item-img-index" src="{{ asset('storage/images/items/'.$item->icon) }}"></td>
                     <td>
                        
@@ -76,5 +99,5 @@
 
 
 </div>	
-
+</div>
 @endsection

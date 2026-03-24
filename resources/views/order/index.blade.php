@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-  
+
   <div class="row">
   	  <div class="col-lg-3">
   	  		<div class="card text-white bg-gradient-primary">
@@ -9,7 +9,7 @@
   	  				<h3> المجموع الكلي</h3>
   	  				{{ number_format($total,2) }} جنيه
   	  			</div>
-  	  			
+
   	  		</div>
   	  </div>
 
@@ -19,7 +19,7 @@
   	  				<h3> مجموع اليوم </h3>
   	  				{{ number_format($total_today,2) }} جنيه
   	  			</div>
-  	  			
+
   	  		</div>
   	  </div>
 
@@ -30,7 +30,7 @@
   	  				<h3> مجموع  الاسبوع </h3>
   	  				{{ number_format($total_week,2) }} جنيه
   	  			</div>
-  	  			
+
   	  		</div>
   	  </div>
 
@@ -41,16 +41,16 @@
   	  				<h3> مجموع  الشهر </h3>
   	  				{{ number_format($total_month,2) }} جنيه
   	  			</div>
-  	  			
+
   	  		</div>
   	  </div>
   </div>
-  <div class="col-lg-12">
+
   	<div class="card">
   			<div class="card-header">
   					تقرير بالمنتج
   			</div>
-  			<div class="card-body">
+  		 <div class="col-lg-12">	<div class="card-body">
   					<form action="{{ route('order.productReport') }}" method="get">
               <div class="row">
               	  <div class="col-lg-12">
@@ -118,20 +118,7 @@
 						<td>
 							<a class="float-right btn btn-success ml-3" href="{{ route('order.show',$order->id) }}">عرض</a>
 
-								<a class="btn btn-danger text-white"  onclick="event.preventDefault();
-                                  var r = confirm('هل انت متاكد ؟');
-                                  if (r == true) {document.getElementById('delete_order_{{ $order->id }}').submit();}">
-                                  	حذف
-                                </a>
 
-								<form style="display: none;" action="{{ route('order.destroy',$order->id) }}"
-				                       method="post" id="delete_order_{{ $order->id }}" class="float-right mr-1">
-				                        @csrf
-
-				                        {{ method_field('DELETE') }}
-
-				                         
-				               </form>
 						</td>
 					</tr>
 				@endforeach

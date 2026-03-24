@@ -20,7 +20,7 @@
                   <option></option>
                   @foreach($ingredients as $ingredient)
                     <option value="{{ $ingredient->id }}" 
-                      @if($stock->ingredient->id == $ingredient->id)
+                      @if($stock->ingredient && $stock->ingredient->id == $ingredient->id)
                       selected
                       @endif 
                       >{{ $ingredient->ingredient }}</option>
@@ -40,7 +40,7 @@
                   <option></option>
                   @foreach($units as $unit)
                     <option value="{{ $unit->id }}"
-                      @if($stock->unit->id == $unit->id)
+                      @if($stock->unit && $stock->unit->id == $unit->id)
                       selected
                       @endif 
                       >{{ $unit->unit }}</option>

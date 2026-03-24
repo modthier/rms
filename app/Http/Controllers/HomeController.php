@@ -7,7 +7,7 @@ use App\Models\DailyExpense;
 use Auth;
 use Carbon\Carbon;
 use App\Models\Order;
-use DB;
+use App\Services\OrderService;
 use Stevebauman\Location\Facades\Location;
 
 class HomeController extends Controller
@@ -42,42 +42,20 @@ class HomeController extends Controller
             if(Auth::user()->hasRole('stockeeper')){
                 return redirect()->route('stock.index');
             }
+
+        return redirect()->route('home');
     }
 
 
-    public function dashboard()
+    public function dashboard(OrderService $orderService)
     {
-        Carbon::setWeekStartsAt(Carbon::SATURDAY);
-        Carbon::setWeekEndsAt(Carbon::FRIDAY);
-        $today = Carbon::today();
-        
-        $total_today = DB::table('orders')->whereDate('created_at',$today)->sum('total_price');
-
-        $daily_expenses = DB::table('daily_expenses')->whereDate('created_at',$today)->sum('amount');
-
-        $total_by_payments = DB::table('orders as o')
-                    ->select(DB::raw('p.method , sum(o.total_items) as total_items,sum(o.total_price) as total_price'))
-                    ->leftJoin('payments as p','p.id','o.payment_id')
-                    ->groupBy('o.payment_id')
-                    ->whereDate('o.created_at',$today)
-                    ->get();
-
-
-        $total_by_items = DB::table('orders as o')
-                    ->select(DB::raw('t.name , sum(od.quantity) as total_quantity,sum(od.price) as total_price'))
-                    ->leftJoin('order_details as od','od.order_id','o.id')
-                    ->leftJoin('items as t','t.id','od.item_id')
-                    ->groupBy('t.name')
-                    ->whereDate('od.created_at',$today)
-                    ->get();
-        
-        
-        return view('dashboard')
+        $report = $orderService->getDailyReport();
+        return view('dashboard', ['metaTitle' => 'لوحة التحكم'])
             ->with([
-                'total_today' => $total_today ,
-                'daily_expenses' => $daily_expenses ,
-                'total_by_payments' => $total_by_payments,
-                'total_by_items' => $total_by_items
+                'total_today' => $report['total_today'],
+                'daily_expenses' => $report['daily_expenses'],
+                'total_by_payments' => $report['total_by_payments'],
+                'total_by_items' => $report['total_by_items'],
             ]);
     }
 

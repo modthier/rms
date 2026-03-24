@@ -31,7 +31,7 @@
               <select id="dailyConsumption" class="form-control" name="stock_id" required>
                   <option></option>
                   @foreach($stocks as $stock)
-                  <option data-quantity="{{ $stock->quantity }}" value="{{ $stock->id }}">{{ $stock->ingredient->ingredient }} - {{ date_format($stock->created_at,'d/m/Y') }} </option>
+                  <option data-quantity="{{ $stock->quantity }}" value="{{ $stock->id }}">{{ $stock->ingredient?->ingredient ?? '—' }} - {{ $stock->created_at?->format('d/m/Y') ?? '' }} </option>
                   @endforeach
               </select>
             </div>

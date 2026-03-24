@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\DailyConsumption;
 use Illuminate\Http\Request;
 use App\Models\Stock;
-use App\Rules\DailyConsumptionRule;
-use DB;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\StoreDailyConsumptionRequest;
 
 class DailyConsumptionController extends Controller
 {
@@ -17,7 +19,10 @@ class DailyConsumptionController extends Controller
      */
     public function index()
     {
-        $dailies = DailyConsumption::orderBy('created_at','desc')->paginate();
+        $this->authorize('viewAny', DailyConsumption::class);
+        $dailies = DailyConsumption::with(['stock.ingredient'])
+            ->orderBy('created_at', 'desc')
+            ->paginate();
        
 
         return view('dailyConsumption.index',['metaTitle' => 'الاستهلاك اليومي'])->with('dailies',$dailies);
@@ -30,7 +35,14 @@ class DailyConsumptionController extends Controller
      */
     public function create()
     {
-        $stocks = Stock::where('quantity','>',0)->get();
+        $this->authorize('create', DailyConsumption::class);
+        $stocks = Stock::query()
+            ->where('quantity', '>', 0)
+            ->whereNotNull('ingredient_id')
+            ->whereHas('ingredient')
+            ->with('ingredient')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('dailyConsumption.create',['metaTitle' => 'سحب من المخزون'])
                 ->with('stocks',$stocks);   
@@ -42,15 +54,9 @@ class DailyConsumptionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreDailyConsumptionRequest $request)
     {
-
-        $this->validate($request,[
-            'stock_id' => 'required' ,
-            'remaining_quantity' => 'required',
-            'quantity' => ['required']
-        ]);
-
+        $this->authorize('create', DailyConsumption::class);
         $stock = Stock::findOrFail($request->stock_id);
 
         $errors = [];
@@ -60,25 +66,24 @@ class DailyConsumptionController extends Controller
         }
 
 
-        DB::beginTransaction();
-
         try {
+            DB::transaction(function () use ($request, $stock) {
+                $daily = new DailyConsumption;
+                $daily->stock_id = $request->stock_id;
+                $daily->quantity = $request->quantity;
+                $daily->save();
 
-            $daily = new DailyConsumption;
-            $daily->stock_id = $request->stock_id;
-            $daily->quantity = $request->quantity;
-            $daily->save();
+                $new_quantity = $stock->quantity - $request->quantity;
+                $stock->update(['quantity' => $new_quantity]);
+            });
 
-            $new_quantity = $stock->quantity - $request->quantity;
-            $stock->update(['quantity' => $new_quantity]);
             $request->session()->flash('success','تم سحب الكمية من المخزون بنجاح');
-
-            DB::commit();
             return redirect()->route('dailyConsumption.index');
-
-
         } catch (Exception $e) {
-            DB::rollBack();
+            Log::error('Daily consumption creation failed', [
+                'stock_id' => $request->stock_id,
+                'error' => $e->getMessage(),
+            ]);
             return redirect()->route('dailyConsumption.create');
         }
 
@@ -117,6 +122,7 @@ class DailyConsumptionController extends Controller
      */
     public function destroy(DailyConsumption $dailyConsumption)
     {
+       $this->authorize('delete', $dailyConsumption);
         
        $stock = Stock::findOrFail($dailyConsumption->stock_id);
     

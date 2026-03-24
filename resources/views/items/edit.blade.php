@@ -27,21 +27,6 @@
             </div>
 
 
-            <div class="form-group">
-              <label> الوزن  </label>
-              <input type="number" class="form-control" name="weight"  
-               value="{{ $item->weight }}" required="">
-            </div>
-
-            <div class="form-group">
-              <label> اختر وحدة القياس </label>
-              <select class="form-control" name="unit_id" required="">
-                  <option></option>
-                  @foreach($units as $unit)
-                    <option value="{{ $unit->id }}" @if($item->unit_id == $unit->id) selected @endif>{{ $unit->unit }}</option>
-                  @endforeach
-              </select>
-            </div>
 
 
             <div class="form-group">

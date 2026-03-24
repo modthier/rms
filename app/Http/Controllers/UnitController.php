@@ -64,7 +64,7 @@ class UnitController extends Controller
      */
     public function edit(Unit $unit)
     {
-        //
+        return view('unit.edit',compact('unit'));
     }
 
     /**
@@ -76,7 +76,18 @@ class UnitController extends Controller
      */
     public function update(Request $request, Unit $unit)
     {
-        //
+        $this->validate($request,[
+            'unit' => 'required'
+        ]);
+
+        
+
+        if ($unit->update(['unit'  => $request->unit])) {
+            $request->session()->flash('success','تم تحديث الوحدة بنجاح');
+            return redirect()->route('unit.index');
+        }else {
+            return redirect()->route('unit.edit',$unit->id);
+        }
     }
 
     /**

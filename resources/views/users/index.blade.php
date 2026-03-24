@@ -44,9 +44,15 @@
                         </a>
 
                         @if($user->active == 1)
-                        <a href="{{ route('management.disableUser',$user->id) }}" class="btn btn-warning mb-1"> تعطيل المستخدم </a>
+                        <form action="{{ route('management.disableUser',$user->id) }}" method="post" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-warning mb-1">تعطيل المستخدم</button>
+                        </form>
                         @else 
-                        <a href="{{ route('management.enableUser',$user->id) }}" class="btn btn-success mb-1"> تفعيل المستخدم </a>
+                        <form action="{{ route('management.enableUser',$user->id) }}" method="post" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-success mb-1">تفعيل المستخدم</button>
+                        </form>
                         @endif
                         <a href="{{ route('user.dailyTotal',$user->id) }}" class="btn btn-danger">
                             عرض تقرير المبيعات

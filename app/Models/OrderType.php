@@ -9,6 +9,9 @@ class OrderType extends Model
 {
     use HasFactory;
 
+    /** @var array<int, string> */
+    protected $fillable = ['name'];
+
     public function order()
     {
         return $this->hasMany(Order::class);

@@ -25,7 +25,12 @@
 
                 @foreach($dailies as $daily)
                 <tr>
-                    <td>{{ $daily->stock->ingredient->ingredient }} {{ date_format($daily->stock->created_at,'d/m/Y') }}</td>
+                    <td>
+                        {{ $daily->stock?->ingredient?->ingredient ?? '—' }}
+                        @if($daily->stock?->created_at)
+                            {{ $daily->stock->created_at->format('d/m/Y') }}
+                        @endif
+                    </td>
                     <td>{{ $daily->quantity }}</td>
                     <td>{{ number_format($daily->stock->unit_price *  $daily->quantity,2) }}</td>
                     <td>{{ $daily->created_at }}</td>

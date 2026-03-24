@@ -48,5 +48,15 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        RateLimiter::for('order-creation', function (Request $request) {
+            return Limit::perMinute(60)
+                ->by(($request->user()?->id ?: 'guest') . '|' . $request->ip())
+                ->response(function () {
+                    return response()->json([
+                        'message' => 'تم تجاوز الحد المسموح لإنشاء الطلبات. الرجاء الانتظار قليلاً ثم المحاولة مرة أخرى.',
+                    ], 429);
+                });
+        });
     }
 }
