@@ -1,33 +1,36 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="h-100">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css"
 	   href="{{ asset('cashier/css/fontawesome-free/css/all.css') }}">
-	<link rel="stylesheet" type="text/css" 
+	<link rel="stylesheet" type="text/css"
 	   href="{{ asset('cashier/css/bootstrap/bootstrap.rtl.min.css') }}">
-	<link rel="stylesheet" type="text/css" 
+	<link rel="stylesheet" type="text/css"
 	  href="{{ asset('cashier/css/style.css') }}">
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $metaTitle ?? config('app.name') }}</title>
-    <style type="text/css">
-    	body {
-		    font-family: "Changa";
-		    background: #eee;
-		}
-    </style>
+	<title>{{ $metaTitle ?? config('app.name') }}</title>
 	@livewireStyles
-	
+	@stack('styles')
 </head>
-<body>
+<body class="cashier-layout">
 
+<div class="cashier-shell d-flex flex-column min-vh-100">
+	@include('cashier.nav')
 
-   @yield('content')
+	<main class="cashier-main flex-grow-1">
+		@yield('content')
+	</main>
 
+	<footer class="cashier-footer mt-auto">
+		<span>{{ config('app.name') }}</span>
+		<span class="cashier-footer-year">© {{ date('Y') }}</span>
+	</footer>
+</div>
 
-<script type="text/javascript" 
+<script type="text/javascript"
   src="{{ asset('cashier/js/jquery.min.js') }}"></script>
 
   @vite('resources/js/app.js')
@@ -36,10 +39,10 @@
 <script type="text/javascript" src="{{ asset('js/printThis.js') }}"></script>
 <script type="text/javascript">
 
-	
+
 
 	$('body').on('click','.close',function () {
-		
+
 		$('#printArea').html('');
 		$('#printArea').hide();
 		$('#salesPoint').show();
@@ -53,15 +56,21 @@
         $('#print'+id).printThis({
 		importCSS: true
 	});
-        
+
     });
 
      $('.leftmenutrigger').on('click', function(e) {
-     $('.side-nav').toggleClass("open");
-        e.preventDefault();
+     e.preventDefault();
+     $('.side-nav').toggleClass('open');
+     $('.cashier-sidebar-backdrop').toggleClass('is-visible', $('.side-nav').hasClass('open'));
      });
 
-    
+    $('.cashier-sidebar-backdrop').on('click', function () {
+        $('.side-nav').removeClass('open');
+        $(this).removeClass('is-visible');
+    });
+
+
 	$("#myForm").on("submit", function(event){
 		        event.preventDefault();
 				$('#orderBtn').attr('disabled','disabled');
@@ -71,8 +80,8 @@
 					}
 				});
 		        var formValues= $(this).serialize();
-		 
-		        
+
+
 		        $.ajax({
 					url : '{{ route('cashier.store') }}',
 					type : 'post',
@@ -84,7 +93,7 @@
 							return;
 						}
 						$('#salesPoint').hide();
-						$('.order_list').html('');	
+						$('.order_list').html('');
 						$('.total').html('');
 		                $('#total_all').val('');
 		                $('#printArea').show();
@@ -129,7 +138,7 @@
 		var quantity = 0;
 
 
-		var html = 
+		var html =
 		`<tr>
 			<td>${name}</td>
 			<td><input type="number" name="items[${id}][quantity]" class="form-control input-sm quantity" min-value="1" value="1" data-id="${id}" id="qu${id}"
@@ -148,15 +157,15 @@
 			var total = price * new_q;
 			$("#price"+id).val(total.toFixed(2));
 		}
-	
+
 		calulate_total();
 
 	});
 
 	$('body').on('click','.delete-item',function(e){
 
-		e.preventDefault();		
-		
+		e.preventDefault();
+
 		$(this).closest('tr').remove();
 
 		calulate_total();
@@ -166,18 +175,18 @@
 
 	$('body').on('change','.quantity',function (e) {
 
-		
+
 		var id = $(this).data('id');
 		var price = parseFloat($(this).data('price'));
         var quantity = parseFloat($(this).val());
-       
 
-       
+
+
         var total = price * quantity;
-        
+
         $("#price"+id).val(total.toFixed(2));
         calulate_total();
-        
+
 	});
 
 	$('#cleanBtn').on('click',function (e) {
@@ -199,9 +208,9 @@
 	function calulate_total() {
 		var price = 0.0;
 		$('.order_list .price').each(function(index){
-			
+
 			price += parseFloat($(this).val());
-			
+
 		});
 
 		$('.total').html(price);
@@ -214,10 +223,10 @@
 		}
     }
 
-    
-	
-	
+
+
 </script>
+@stack('scripts')
 
 </body>
 </html>

@@ -106,11 +106,11 @@
     <div class="row">
         @foreach($order->items as $item)
             <div class="col-lg-5 mb-3">
-                <div class="card">
-                    <div class="card-header no-print">
-                        <button class="print btn btn-success" data-id="{{ $item->pivot->id }}">طباعة</button>
+                <div class="cashier-card cashier-card--print cashier-card--flush">
+                    <div class="cashier-card-header no-print py-2">
+                        <button type="button" class="print btn btn-success btn-sm" data-id="{{ $item->pivot->id }}">طباعة</button>
                     </div>
-                    <div class="card-body p-2">
+                    <div class="cashier-card-body p-2">
                         <div id="print{{ $item->pivot->id }}">
                             @include('cashier.partials.receipt-client', [
                                 'name' => $name,
@@ -144,11 +144,11 @@
                 $typeSubtotal = $typeItems->sum(function ($row) { return $row->quantity * $row->price; });
             @endphp
             <div class="col-lg-5 mb-2">
-                <div class="card">
-                    <div class="card-header no-print">
-                        <button class="print btn btn-success" data-id="{{ $type->item_type_id }}">طباعة</button>
+                <div class="cashier-card cashier-card--print cashier-card--flush">
+                    <div class="cashier-card-header no-print py-2">
+                        <button type="button" class="print btn btn-success btn-sm" data-id="{{ $type->item_type_id }}">طباعة</button>
                     </div>
-                    <div class="card-body p-2">
+                    <div class="cashier-card-body p-2">
                         <div id="print{{ $type->item_type_id }}">
                             @include('cashier.partials.receipt-client', [
                                 'name' => $name,

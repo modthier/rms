@@ -80,7 +80,9 @@ class CashierController extends Controller
 
     public function cashierDashboard()
     {
-    	return view('cashier.dashboard');
+        $name = Setting::getCached();
+
+        return view('cashier.dashboard')->with(['name' => $name, 'metaTitle' => 'الكاشير']);
     }
 
 
