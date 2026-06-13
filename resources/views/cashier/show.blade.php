@@ -82,6 +82,7 @@
 }
 .receipt-paper .page-break {
     page-break-after: always;
+    break-after: page;
 }
 @media print {
     .receipt-paper {
@@ -90,10 +91,17 @@
         max-width: 100%;
     }
     .no-print { display: none !important; }
+    .page-break {
+        page-break-after: always;
+        break-after: page;
+    }
 }
 </style>
 
-<button class="btn btn-danger close mb-3 no-print">رجوع</button>
+<div class="d-flex gap-2 mb-3 no-print">
+    <button class="btn btn-danger close">رجوع</button>
+    <button type="button" class="print-all btn btn-success">طباعة الكل</button>
+</div>
 
 @php
     $orderDate = $order->created_at;
@@ -102,77 +110,22 @@
     $paymentName = $order->payment ? $order->payment->method : '-';
 @endphp
 
-@if($order->items->count() == 1)
-    <div class="row">
-        @foreach($order->items as $item)
-            <div class="col-lg-5 mb-3">
-                <div class="cashier-card cashier-card--print cashier-card--flush">
-                    <div class="cashier-card-header no-print py-2">
-                        <button type="button" class="print btn btn-success btn-sm" data-id="{{ $item->pivot->id }}">طباعة</button>
-                    </div>
-                    <div class="cashier-card-body p-2">
-                        <div id="print{{ $item->pivot->id }}">
-                            @include('cashier.partials.receipt-client', [
-                                'name' => $name,
-                                'order' => $order,
-                                'counter' => $counter,
-                                'orderDateFormatted' => $orderDateFormatted,
-                                'orderTimeFormatted' => $orderTimeFormatted,
-                                'paymentName' => $paymentName,
-                                'items' => [$item],
-                                'singleItem' => true,
-                            ])
-                            <div class="page-break"></div>
-                            @include('cashier.partials.receipt-kitchen', [
-                                'name' => $name,
-                                'order' => $order,
-                                'counter' => $counter,
-                                'items' => [$item],
-                                'singleItem' => true,
-                            ])
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endforeach
+<div class="cashier-card cashier-card--print cashier-card--flush">
+    <div class="cashier-card-body p-2">
+        <div id="printAll">
+            @foreach($order->items as $item)
+                @include('cashier.partials.receipt-print-content', [
+                    'name' => $name,
+                    'order' => $order,
+                    'counter' => $counter,
+                    'orderDateFormatted' => $orderDateFormatted,
+                    'orderTimeFormatted' => $orderTimeFormatted,
+                    'paymentName' => $paymentName,
+                    'items' => [$item],
+                    'singleItem' => true,
+                ])
+                <div class="page-break"></div>
+            @endforeach
+        </div>
     </div>
-@else
-    <div class="row">
-        @foreach($types as $type)
-            @php
-                $typeItems = $order->getItemsByTypes($type->item_type_id);
-                $typeSubtotal = $typeItems->sum(function ($row) { return $row->quantity * $row->price; });
-            @endphp
-            <div class="col-lg-5 mb-2">
-                <div class="cashier-card cashier-card--print cashier-card--flush">
-                    <div class="cashier-card-header no-print py-2">
-                        <button type="button" class="print btn btn-success btn-sm" data-id="{{ $type->item_type_id }}">طباعة</button>
-                    </div>
-                    <div class="cashier-card-body p-2">
-                        <div id="print{{ $type->item_type_id }}">
-                            @include('cashier.partials.receipt-client', [
-                                'name' => $name,
-                                'order' => $order,
-                                'counter' => $counter,
-                                'orderDateFormatted' => $orderDateFormatted,
-                                'orderTimeFormatted' => $orderTimeFormatted,
-                                'paymentName' => $paymentName,
-                                'items' => $typeItems,
-                                'singleItem' => false,
-                                'typeSubtotal' => $typeSubtotal,
-                            ])
-                            <div class="page-break"></div>
-                            @include('cashier.partials.receipt-kitchen', [
-                                'name' => $name,
-                                'order' => $order,
-                                'counter' => $counter,
-                                'items' => $typeItems,
-                                'singleItem' => false,
-                            ])
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-@endif
+</div>

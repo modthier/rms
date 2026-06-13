@@ -10,11 +10,18 @@ use Illuminate\Support\Facades\Cache;
  *
  * @property int $id
  * @property string $name
+ * @property string $receipt_mode
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  */
 class Setting extends Model
 {
+    /** Two receipts: separate kitchen and customer copies. */
+    public const RECEIPT_MODE_DUAL = 'dual';
+
+    /** One general receipt for kitchen and customer. */
+    public const RECEIPT_MODE_SINGLE = 'single';
+
     /** Cache key for app settings. */
     public const CACHE_KEY = 'app_settings';
 
@@ -41,5 +48,23 @@ class Setting extends Model
     public static function clearCache(): void
     {
         Cache::forget(self::CACHE_KEY);
+    }
+
+    /**
+     * Whether orders print separate kitchen and customer receipts.
+     */
+    public function usesDualReceipts(): bool
+    {
+        return ($this->receipt_mode ?? self::RECEIPT_MODE_DUAL) !== self::RECEIPT_MODE_SINGLE;
+    }
+
+    /**
+     * Human-readable label for the current receipt mode.
+     */
+    public function receiptModeLabel(): string
+    {
+        return $this->usesDualReceipts()
+            ? 'فاتورتان (مطبخ وعميل)'
+            : 'فاتورة واحدة عامة';
     }
 }

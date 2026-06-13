@@ -41,6 +41,12 @@
 
 
 
+	function printAllReceipts() {
+		$('#printAll').printThis({
+			importCSS: true
+		});
+	}
+
 	$('body').on('click','.close',function () {
 
 		$('#printArea').html('');
@@ -50,13 +56,9 @@
 		calulate_total();
 
 	});
-	$('body').on('click','.print',function(e){
+	$('body').on('click','.print-all',function(e){
         e.preventDefault();
-        var id = $(this).data('id');
-        $('#print'+id).printThis({
-		importCSS: true
-	});
-
+        printAllReceipts();
     });
 
      $('.leftmenutrigger').on('click', function(e) {
@@ -98,6 +100,9 @@
 		                $('#total_all').val('');
 		                $('#printArea').show();
 		                $('#printArea').html(result);
+						setTimeout(function () {
+							printAllReceipts();
+						}, 300);
 					},
 					error: function(xhr){
 						if (xhr.status === 429) {

@@ -18,6 +18,10 @@
 	            <label> اسن المطعم </label>
 	            <input type="text" class="form-control" name="name" value="{{ $setting->name }}" required="">
             </div>
+
+            @include('setting.partials.receipt-mode-field', [
+                'selectedReceiptMode' => $setting->receipt_mode ?? \App\Models\Setting::RECEIPT_MODE_DUAL,
+            ])
           
             <button type="submit" class="btn btn-primary btn-lg" id="btnLogin"> تعديل </button>
         </form>

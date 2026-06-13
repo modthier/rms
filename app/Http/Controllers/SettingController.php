@@ -30,12 +30,14 @@ class SettingController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'name' => 'required'
+            'name' => 'required',
+            'receipt_mode' => 'required|in:'.Setting::RECEIPT_MODE_DUAL.','.Setting::RECEIPT_MODE_SINGLE,
         ]);
 
         $setting = new Setting;
 
         $setting->name = $request->name;
+        $setting->receipt_mode = $request->receipt_mode;
 
         if ($setting->save()) {
             Setting::clearCache();
@@ -70,12 +72,14 @@ class SettingController extends Controller
     public function update(Request $request, Setting $setting)
     {
         $this->validate($request,[
-            'name' => 'required'
+            'name' => 'required',
+            'receipt_mode' => 'required|in:'.Setting::RECEIPT_MODE_DUAL.','.Setting::RECEIPT_MODE_SINGLE,
         ]);
 
         
 
         $setting->name  = $request->name;
+        $setting->receipt_mode = $request->receipt_mode;
         
 
         if ($setting->save()) {

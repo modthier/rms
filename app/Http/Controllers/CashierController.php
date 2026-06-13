@@ -135,10 +135,6 @@ class CashierController extends Controller
 
             $name = Setting::getCached();
 
-            // Item has item_type_id; ItemType uses id (not item_type_id). Wrong pluck was always null → empty receipt.
-            $typeIds = $order->items->pluck('item_type_id')->unique()->filter()->values();
-            $types = $typeIds->map(fn ($id) => (object) ['item_type_id' => $id]);
-
             $today = Carbon::today();
             $order_count = Order::whereBetween('created_at', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])->count();
             $counter = $order_count;
@@ -147,7 +143,6 @@ class CashierController extends Controller
                 'order' => $order,
                 'counter' => $counter,
                 'name' => $name,
-                'types' => $types,
             ])->render();
 
             return response($html, 200)->header('Content-Type', 'text/html; charset=UTF-8');

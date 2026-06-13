@@ -10,6 +10,7 @@
                 <thead>
                    
                     <th>اسم المطعم</th>
+                    <th>نوع الفاتورة</th>
                     <th>عمليات</th>
                 </thead>
 
@@ -17,6 +18,7 @@
                   @foreach ($setting as $name)
                   <tr>
                     <td>{{ $name->name }}</td>
+                    <td>{{ $name->receiptModeLabel() }}</td>
                     <td>
                        
                       <a href="{{ route('setting.edit',$name->id) }}" class="btn btn-success">تعديل</a>
@@ -56,6 +58,8 @@
                         <label> اسم المطعم </label>
                         <input type="text" name="name" class="form-control" required>
                     </div>
+
+                    @include('setting.partials.receipt-mode-field')
 
                     <input type="submit" value="حفظ" class="btn btn-primary">
                 </form>
