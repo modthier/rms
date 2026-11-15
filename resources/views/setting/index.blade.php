@@ -36,41 +36,10 @@
 
         @else
         <h3 class="text-center text-danger mt-3 p-5"> لم يتم تعيين اسم المطعم بعد  </h3>
-        <button class="btn btn btn-primary" id="show">  تعيين اسم المطعم  </button>
-        @endif
-
-        
-
-
-
-    </div>	
-
-
-    <div class="modal  fade"  id="resturnat" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog   modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('setting.store') }}" method="post">
-                    {{ csrf_field() }} 
-                    <div class="form-group">
-                        <label> اسم المطعم </label>
-                        <input type="text" id="setting-name" name="name" class="form-control" required>
-                    </div>
-
-                    @include('setting.partials.receipt-mode-field')
-
-                    <input type="submit" value="حفظ" class="btn btn-primary">
-                </form>
-            </div>
-
+        <div class="text-center pb-4">
+            <a href="{{ route('setting.create') }}" class="btn btn-primary">تعيين اسم المطعم</a>
         </div>
+        @endif
     </div>
-</div>
 
 @endsection

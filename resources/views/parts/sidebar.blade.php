@@ -44,7 +44,7 @@
         'dailyExpense.search',
         'summary.*',
     );
-    $openSettings = request()->routeIs('unit.*', 'setting.*', 'payment.*');
+    $openSettings = request()->routeIs('unit.*', 'setting.*', 'payment.*', 'orderType.*');
 @endphp
 
 <aside id="ta-sidebar" class="ta-sidebar px-4 pb-6 pt-5" aria-label="القائمة الجانبية">
@@ -262,6 +262,8 @@
                                    href="{{ route('unit.index') }}">وحدات القياس</a></li>
                             <li><a class="menu-dropdown-item {{ request()->routeIs('setting.*') ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}"
                                    href="{{ route('setting.index') }}">ضبط النظام</a></li>
+                            <li><a class="menu-dropdown-item {{ request()->routeIs('orderType.*') ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}"
+                                   href="{{ route('orderType.index') }}">أنواع الطلبات</a></li>
                             <li><a class="menu-dropdown-item {{ request()->routeIs('payment.*') ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}"
                                    href="{{ route('payment.index') }}">طرق الدفع</a></li>
                         </ul>

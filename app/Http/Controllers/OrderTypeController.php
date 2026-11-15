@@ -14,72 +14,29 @@ class OrderTypeController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $orderTypes = OrderType::orderByDesc('id')->paginate();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('orderTypes.index', [
+            'metaTitle' => 'أنواع الطلبات',
+            'orderTypes' => $orderTypes,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:order_types,name',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\OrderType  $orderType
-     * @return \Illuminate\Http\Response
-     */
-    public function show(OrderType $orderType)
-    {
-        //
-    }
+        OrderType::create($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\OrderType  $orderType
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(OrderType $orderType)
-    {
-        //
-    }
+        $request->session()->flash('success', 'تم حفظ نوع الطلب بنجاح');
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\OrderType  $orderType
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, OrderType $orderType)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\OrderType  $orderType
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(OrderType $orderType)
-    {
-        //
+        return redirect()->route('orderType.index');
     }
 }

@@ -19,7 +19,17 @@ class SettingController extends Controller
         return view('setting.index',['metaTitle' => 'اسم المطعم'])->with('setting',$setting);
     }
 
-   
+    /**
+     * Show the form for creating a new setting.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('setting.create', [
+            'metaTitle' => 'إضافة اسم المطعم',
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.

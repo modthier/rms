@@ -82,8 +82,33 @@ class ReceiptFontSizeTest extends TestCase
 
         $this->get(route('setting.index'))
             ->assertOk()
+            ->assertSee('Restaurant')
+            ->assertDontSee('id="resturnat"', false);
+
+        $this->get(route('setting.create'))
+            ->assertOk()
             ->assertSee('id="receipt-size-preview"', false)
             ->assertSee('value="16"', false);
+    }
+
+    public function test_admin_can_create_setting_from_the_standalone_form(): void
+    {
+        $role = Role::create(['role' => 'admin']);
+        $admin = User::factory()->create(['role_id' => $role->id]);
+
+        $this->actingAs($admin)
+            ->post(route('setting.store'), [
+                'name' => 'Restaurant',
+                'receipt_mode' => Setting::RECEIPT_MODE_DUAL,
+                'receipt_font_size' => 19,
+            ])
+            ->assertRedirect(route('setting.index'));
+
+        $this->assertDatabaseHas('settings', [
+            'name' => 'Restaurant',
+            'receipt_mode' => Setting::RECEIPT_MODE_DUAL,
+            'receipt_font_size' => 19,
+        ]);
     }
 
     public function test_pos_receipt_uses_the_configured_font_size(): void

@@ -20,6 +20,7 @@ use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ItemTypeController;
+use App\Http\Controllers\OrderTypeController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\IngredientController;
@@ -130,7 +131,9 @@ Route::get('summary', [SummaryController::class,'index'])
 
 Route::resource('unit',UnitController::class,['except' => ['show','destroy','create']]);
 Route::resource('setting',SettingController::class,['except' => 
-       ['show','destroy','create']]);
+       ['show','destroy']]);
+Route::get('orderType', [OrderTypeController::class, 'index'])->name('orderType.index');
+Route::post('orderType', [OrderTypeController::class, 'store'])->name('orderType.store');
 
 Route::get('userManagement/create',[UserManagementController::class,'create'])->name('management.create');
 Route::post('userManagement',[UserManagementController::class,'store'])->name('management.store');
