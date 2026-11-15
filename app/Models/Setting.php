@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Application settings (e.g. restaurant name). Supports cached access via getCached().
@@ -11,11 +12,23 @@ use Illuminate\Support\Facades\Cache;
  * @property int $id
  * @property string $name
  * @property string $receipt_mode
+ * @property int $receipt_font_size
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  */
 class Setting extends Model
 {
+    protected $fillable = [
+        'name',
+        'receipt_mode',
+        'receipt_font_size',
+        'customer_printer',
+        'kitchen_printer',
+    ];
+
+    /** Default receipt text size in pixels. */
+    public const DEFAULT_RECEIPT_FONT_SIZE = 16;
+
     /** Two receipts: separate kitchen and customer copies. */
     public const RECEIPT_MODE_DUAL = 'dual';
 
@@ -35,9 +48,34 @@ class Setting extends Model
      */
     public static function getCached(): ?self
     {
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
-            return static::first();
-        });
+        try {
+            return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
+                if (!Schema::hasTable((new static)->getTable())) {
+                    return new static([
+                        'name' => config('app.name', 'RMS'),
+                        'receipt_mode' => self::RECEIPT_MODE_DUAL,
+                    ]);
+                }
+
+                $setting = static::first();
+
+                if ($setting instanceof self) {
+                    return $setting;
+                }
+
+                return new static([
+                    'name' => config('app.name', 'RMS'),
+                    'receipt_mode' => self::RECEIPT_MODE_DUAL,
+                ]);
+            });
+        } catch (\Throwable $e) {
+            report($e);
+
+            return new static([
+                'name' => config('app.name', 'RMS'),
+                'receipt_mode' => self::RECEIPT_MODE_DUAL,
+            ]);
+        }
     }
 
     /**

@@ -19,14 +19,14 @@
                   <div class="col-lg-6">
                       <div class="form-group">
                           <label>   من تاريخ  </label>
-                          <input type="date" name="date_from" class="form-control" required>
+                          <input type="date" name="date_from" value="{{ $date_from }}" class="form-control" required>
                       </div>
                   </div>
 
                    <div class="col-lg-6">
                       <div class="form-group">
                           <label>    الي تاريخ   </label>
-                          <input type="date" name="date_to" class="form-control" required>
+                          <input type="date" name="date_to" value="{{ $date_to }}" class="form-control" required>
                       </div>
                   </div>
               </div>
@@ -49,6 +49,7 @@
             <table class="table table-hover">
                 <thead>
                     <th>مجموع المبيعات </th>
+                    <th>مبيعات الفواتير</th>
                     <th>مجموع المشتريات </th>
                     <th>مجموع المنصرفات </th>
                     <th>مجموع الاحتياجات </th>
@@ -60,6 +61,7 @@
                 
                  <tr>
                     <td>{{ number_format($total,2) }}</td>
+                    <td><a href="{{ route('bulkInvoices.index', ['date_from' => $date_from, 'date_to' => $date_to]) }}">{{ number_format($invoice_total,2) }}</a></td>
                     <td>{{ number_format($po_total,2) }}</td>
                     <td>{{ number_format($expense_total,2) }}</td>
                     <td>{{ number_format($requirement_total,2) }}</td>

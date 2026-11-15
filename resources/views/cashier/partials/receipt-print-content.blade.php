@@ -1,7 +1,9 @@
 @php
     $usesDualReceipts = ($name ?? null)?->usesDualReceipts() ?? true;
+    $receiptFontSize = ($name ?? null)?->receipt_font_size ?? \App\Models\Setting::DEFAULT_RECEIPT_FONT_SIZE;
     $receiptData = [
         'name' => $name,
+        'receiptFontSize' => $receiptFontSize,
         'order' => $order,
         'counter' => $counter,
         'orderDateFormatted' => $orderDateFormatted,
@@ -17,9 +19,15 @@
 @endphp
 
 @if($usesDualReceipts)
-    @include('cashier.partials.receipt-client', $receiptData)
+    <div class="qz-receipt-client">
+        @include('cashier.partials.receipt-client', $receiptData)
+    </div>
     <div class="page-break"></div>
-    @include('cashier.partials.receipt-kitchen', $receiptData)
+    <div class="qz-receipt-kitchen">
+        @include('cashier.partials.receipt-kitchen', $receiptData)
+    </div>
 @else
-    @include('cashier.partials.receipt-general', $receiptData)
+    <div class="qz-receipt-general">
+        @include('cashier.partials.receipt-general', $receiptData)
+    </div>
 @endif

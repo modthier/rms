@@ -16,11 +16,14 @@
           {{ method_field('PUT') }}
             <div class="form-group">
 	            <label> اسن المطعم </label>
-	            <input type="text" class="form-control" name="name" value="{{ $setting->name }}" required="">
+	            <input type="text" class="form-control" id="setting-name" name="name" value="{{ $setting->name }}" required="">
             </div>
 
             @include('setting.partials.receipt-mode-field', [
                 'selectedReceiptMode' => $setting->receipt_mode ?? \App\Models\Setting::RECEIPT_MODE_DUAL,
+                'receiptFontSize' => $setting->receipt_font_size ?? \App\Models\Setting::DEFAULT_RECEIPT_FONT_SIZE,
+                'customerPrinter' => $setting->customer_printer,
+                'kitchenPrinter' => $setting->kitchen_printer,
             ])
           
             <button type="submit" class="btn btn-primary btn-lg" id="btnLogin"> تعديل </button>

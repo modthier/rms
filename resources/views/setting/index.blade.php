@@ -11,6 +11,8 @@
                    
                     <th>اسم المطعم</th>
                     <th>نوع الفاتورة</th>
+                    <th>طابعة العميل</th>
+                    <th>طابعة المطبخ</th>
                     <th>عمليات</th>
                 </thead>
 
@@ -19,6 +21,8 @@
                   <tr>
                     <td>{{ $name->name }}</td>
                     <td>{{ $name->receiptModeLabel() }}</td>
+                    <td>{{ $name->customer_printer ?: 'غير محددة' }}</td>
+                    <td>{{ $name->kitchen_printer ?: 'غير محددة' }}</td>
                     <td>
                        
                       <a href="{{ route('setting.edit',$name->id) }}" class="btn btn-success">تعديل</a>
@@ -56,7 +60,7 @@
                     {{ csrf_field() }} 
                     <div class="form-group">
                         <label> اسم المطعم </label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input type="text" id="setting-name" name="name" class="form-control" required>
                     </div>
 
                     @include('setting.partials.receipt-mode-field')

@@ -11,6 +11,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\AdvanceController;
 use App\Http\Controllers\CashierController;
+use App\Http\Controllers\QzPrinterController;
+use App\Http\Controllers\BulkInvoiceController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SummaryController;
@@ -53,6 +56,12 @@ Route::get('/health/ready', [HealthController::class, 'ready'])->name('health.re
 Auth::routes(['register' => false]);
 
 Route::group(['middleware' => 'auth'], function () {
+Route::get('/qz/certificate', [QzPrinterController::class, 'certificate'])
+    ->middleware('can:cashier')
+    ->name('qz.certificate');
+Route::post('/qz/signature', [QzPrinterController::class, 'signature'])
+    ->middleware(['can:cashier', 'throttle:60,1'])
+    ->name('qz.signature');
 Route::get('/home', [HomeController::class,'index'])->name('home');
 Route::get('/order/realtime', [OrderController::class,'realtime'])->name('order.realtime');
 Route::get('order/dailyReport', [OrderController::class,'dailyReport'])
@@ -166,6 +175,14 @@ Route::group(['middleware' => 'can:stockeeper'], function(){
 });
 
 Route::group(['middleware' => 'can:cashier'], function(){
+
+    Route::resource('companies', CompanyController::class)->except(['show', 'destroy']);
+    Route::get('bulkInvoices', [BulkInvoiceController::class, 'index'])->name('bulkInvoices.index');
+    Route::get('bulkInvoices/create', [BulkInvoiceController::class, 'create'])->name('bulkInvoices.create');
+    Route::post('bulkInvoices', [BulkInvoiceController::class, 'store'])->name('bulkInvoices.store');
+    Route::get('bulkInvoices/{bulkInvoice}', [BulkInvoiceController::class, 'show'])->name('bulkInvoices.show');
+    Route::post('bulkInvoices/{bulkInvoice}/payments', [BulkInvoiceController::class, 'storePayment'])
+        ->name('bulkInvoices.payments.store');
 
     Route::get('cashier/create',[CashierController::class,'create'])->name('cashier.create');
 

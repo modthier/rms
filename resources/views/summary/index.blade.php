@@ -48,6 +48,9 @@
         
 
         <h4>مجموع المبيعات : {{ number_format($total,2) }}</h4>
+        <h4>مبيعات الفواتير :
+          <a href="{{ route('bulkInvoices.index') }}">{{ number_format($invoice_total,2) }}</a>
+        </h4>
         <h4>مجموع المشتريات : {{ number_format($po_total,2) }}</h4>
 
         <h4>مجموع المنصرفات : {{ number_format($expense_total,2) }}</h4>
@@ -69,6 +72,9 @@
         <strong>ملخص اليوم</strong>
         <hr>
         <h4>مجموع المبيعات : {{ number_format($total_today,2) }}</h4>
+        <h4>مبيعات الفواتير :
+          <a href="{{ route('bulkInvoices.index', ['date_from' => $today_date, 'date_to' => $today_date]) }}">{{ number_format($invoice_today,2) }}</a>
+        </h4>
         <h4>مجموع المشتريات : {{ number_format($po_today,2) }}</h4>
 
         <h4>مجموع المنصرفات : {{ number_format($expense_today,2) }}</h4>
@@ -88,6 +94,9 @@
         <strong>ملخص الاسبوع</strong>
         <hr>
         <h4>مجموع المبيعات : {{ number_format($total_week,2) }}</h4>
+        <h4>مبيعات الفواتير :
+          <a href="{{ route('bulkInvoices.index', ['date_from' => $week_from, 'date_to' => $week_to]) }}">{{ number_format($invoice_week,2) }}</a>
+        </h4>
         <h4>مجموع المشتريات : {{ number_format($po_week,2) }}</h4>
 
         <h4>مجموع المنصرفات : {{ number_format($expense_week,2) }}</h4>
@@ -107,6 +116,9 @@
         <strong> ملخص الشهر </strong>
         <hr>
         <h4>مجموع المبيعات : {{ number_format($total_month,2) }}</h4>
+        <h4>مبيعات الفواتير :
+          <a href="{{ route('bulkInvoices.index', ['date_from' => $month_from, 'date_to' => $month_to]) }}">{{ number_format($invoice_month,2) }}</a>
+        </h4>
         <h4>مجموع المشتريات : {{ number_format($po_month,2) }}</h4>
 
         <h4>مجموع المنصرفات : {{ number_format($expense_month,2) }}</h4>

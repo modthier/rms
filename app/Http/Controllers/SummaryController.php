@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Order;
+use App\Models\BulkInvoice;
 use App\Models\Requirement;
 use App\Models\DailyExpense;
 use Illuminate\Http\Request;
@@ -29,6 +30,20 @@ class SummaryController extends Controller
         $total_today = Order::notReturned()->whereBetween('created_at', [$todayStart, $todayEnd])->sum('total_price');
         $total_week = Order::notReturned()->thisWeek()->sum('total_price');
         $total_month = Order::notReturned()->thisMonth()->sum('total_price');
+        $invoice_total = BulkInvoice::sum('total');
+        $invoice_today = BulkInvoice::whereDate('issued_on', $today)->sum('total');
+        $invoice_week = BulkInvoice::whereBetween('issued_on', [
+            Carbon::now()->startOfWeek()->toDateString(),
+            Carbon::now()->endOfWeek()->toDateString(),
+        ])->sum('total');
+        $invoice_month = BulkInvoice::whereBetween('issued_on', [
+            Carbon::now()->startOfMonth()->toDateString(),
+            Carbon::now()->endOfMonth()->toDateString(),
+        ])->sum('total');
+        $total += $invoice_total;
+        $total_today += $invoice_today;
+        $total_week += $invoice_week;
+        $total_month += $invoice_month;
 
         $po_total = PurchaseOrders::sum('total_price');
         $po_today = PurchaseOrders::whereBetween('created_at', [$todayStart, $todayEnd])->sum('total_price');
@@ -69,6 +84,15 @@ class SummaryController extends Controller
               'total_today' => $total_today,
               'total_week' => $total_week ,
               'total_month' => $total_month,
+              'invoice_total' => $invoice_total,
+              'invoice_today' => $invoice_today,
+              'invoice_week' => $invoice_week,
+              'invoice_month' => $invoice_month,
+              'today_date' => $today->toDateString(),
+              'week_from' => Carbon::now()->startOfWeek()->toDateString(),
+              'week_to' => Carbon::now()->endOfWeek()->toDateString(),
+              'month_from' => Carbon::now()->startOfMonth()->toDateString(),
+              'month_to' => Carbon::now()->endOfMonth()->toDateString(),
               'expense_total' => $expense_total,
               'expense_today' => $expense_today,
               'expense_week' => $expense_week,
@@ -100,6 +124,11 @@ class SummaryController extends Controller
         $total = Order::notReturned()
             ->whereBetween('created_at', [$from, $to])
             ->sum('total_price');
+        $invoice_total = BulkInvoice::whereBetween('issued_on', [
+            $from->toDateString(),
+            $to->toDateString(),
+        ])->sum('total');
+        $total += $invoice_total;
        
 
         $po_total = PurchaseOrders::whereBetween('created_at', [$from, $to])
@@ -120,6 +149,9 @@ class SummaryController extends Controller
         return view('summary.dateSearch',['metaTitle' => "تقرير بين تاريخين"])
           ->with([
               'total' => $total ,
+              'invoice_total' => $invoice_total,
+              'date_from' => $from->toDateString(),
+              'date_to' => $to->toDateString(),
               'expense_total' => $expense_total,
               'requirement_total' => $requirement_total,
               'net_profit' => $net_profit,

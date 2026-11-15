@@ -32,12 +32,18 @@ class SettingController extends Controller
         $this->validate($request,[
             'name' => 'required',
             'receipt_mode' => 'required|in:'.Setting::RECEIPT_MODE_DUAL.','.Setting::RECEIPT_MODE_SINGLE,
+            'receipt_font_size' => 'sometimes|integer|min:8|max:24',
+            'customer_printer' => 'nullable|string|max:255',
+            'kitchen_printer' => 'nullable|string|max:255',
         ]);
 
         $setting = new Setting;
 
         $setting->name = $request->name;
         $setting->receipt_mode = $request->receipt_mode;
+        $setting->receipt_font_size = $request->input('receipt_font_size', Setting::DEFAULT_RECEIPT_FONT_SIZE);
+        $setting->customer_printer = $request->input('customer_printer');
+        $setting->kitchen_printer = $request->input('kitchen_printer');
 
         if ($setting->save()) {
             Setting::clearCache();
@@ -74,12 +80,21 @@ class SettingController extends Controller
         $this->validate($request,[
             'name' => 'required',
             'receipt_mode' => 'required|in:'.Setting::RECEIPT_MODE_DUAL.','.Setting::RECEIPT_MODE_SINGLE,
+            'receipt_font_size' => 'sometimes|integer|min:8|max:24',
+            'customer_printer' => 'nullable|string|max:255',
+            'kitchen_printer' => 'nullable|string|max:255',
         ]);
 
         
 
         $setting->name  = $request->name;
         $setting->receipt_mode = $request->receipt_mode;
+        $setting->receipt_font_size = $request->input(
+            'receipt_font_size',
+            $setting->receipt_font_size ?? Setting::DEFAULT_RECEIPT_FONT_SIZE
+        );
+        $setting->customer_printer = $request->input('customer_printer');
+        $setting->kitchen_printer = $request->input('kitchen_printer');
         
 
         if ($setting->save()) {

@@ -22,6 +22,7 @@
     );
     $openHr = request()->routeIs('employee.*', 'advance.*', 'attendance.*', 'employee.calculateSalary');
     $openUsers = request()->routeIs('management.*');
+    $openBulkSales = request()->routeIs('companies.*', 'bulkInvoices.*');
     $openReports = request()->routeIs(
         'order.index',
         'order.show',
@@ -71,7 +72,7 @@
         </div>
     </div>
 
-    <nav class="custom-scrollbar flex flex-1 flex-col overflow-y-auto no-scrollbar">
+    <nav class="custom-scrollbar min-h-0 flex flex-1 flex-col overflow-y-auto">
         <p class="ta-nav-section-title mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">القائمة</p>
         <ul class="flex flex-col gap-1">
             <li>
@@ -89,6 +90,25 @@
                     </a>
                 @endif
             </li>
+
+            @can('cashier')
+                <li>
+                    <details class="ta-nav-details" @if ($openBulkSales) open @endif>
+                        <summary
+                            class="menu-item cursor-pointer select-none {{ $openBulkSales ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <i class="fa fa-file-invoice-dollar w-5 shrink-0 text-center text-sm"></i>
+                            <span class="ta-sb-label">مبيعات الشركات</span>
+                            <i class="fa fa-chevron-down ta-chevron ta-sb-chevron text-xs"></i>
+                        </summary>
+                        <ul class="ta-nav-sub mr-9 mt-1 space-y-0.5 border-r border-gray-100 pr-2">
+                            <li><a class="menu-dropdown-item {{ request()->routeIs('bulkInvoices.*') ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}"
+                                   href="{{ route('bulkInvoices.index') }}">فواتير الشركات</a></li>
+                            <li><a class="menu-dropdown-item {{ request()->routeIs('companies.*') ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}"
+                                   href="{{ route('companies.index') }}">الشركات</a></li>
+                        </ul>
+                    </details>
+                </li>
+            @endcan
 
             @can('admin_only')
                 <li>

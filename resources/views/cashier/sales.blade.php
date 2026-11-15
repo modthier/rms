@@ -45,12 +45,15 @@
 										<td>
 											<div class="cashier-actions">
 												<a class="btn btn-success btn-sm" href="{{ route('cashier.showSales',$order->id) }}">عرض</a>
+												@if($order->returned == 0)
+												
 												<a class="btn btn-danger btn-sm" href="#"
 												   onclick="event.preventDefault();
 												   var r = confirm('هل انت متاكد ؟');
 												   if (r == true) {document.getElementById('delete_order_{{ $order->id }}').submit();}">
 													إلغاء الطلب
 												</a>
+												@endif
 												<form style="display: none;" action="{{ route('order.cancelOrder',$order->id) }}"
 												      method="post" id="delete_order_{{ $order->id }}">
 													@csrf

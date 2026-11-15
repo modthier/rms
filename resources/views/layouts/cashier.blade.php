@@ -11,6 +11,8 @@
 	  href="{{ asset('cashier/css/style.css') }}">
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<meta name="qz-certificate-url" content="{{ route('qz.certificate') }}">
+	<meta name="qz-signature-url" content="{{ route('qz.signature') }}">
 	<title>{{ $metaTitle ?? config('app.name') }}</title>
 	@livewireStyles
 	@stack('styles')
@@ -33,7 +35,7 @@
 <script type="text/javascript"
   src="{{ asset('cashier/js/jquery.min.js') }}"></script>
 
-  @vite('resources/js/app.js')
+  @vite(['resources/js/app.js', 'resources/js/qz-tray.js'])
     @livewireScripts
 <script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/printThis.js') }}"></script>
@@ -42,9 +44,67 @@
 
 
 	function printAllReceipts() {
+		var receiptRoot = document.getElementById('printAll');
+		var customerPrinter = receiptRoot && receiptRoot.dataset.customerPrinter;
+		var kitchenPrinter = receiptRoot && receiptRoot.dataset.kitchenPrinter;
+		var receiptMode = receiptRoot && receiptRoot.dataset.receiptMode;
+
+		if (customerPrinter && (receiptMode !== 'dual' || kitchenPrinter)) {
+			return printReceiptsToConfiguredPrinters(receiptRoot, customerPrinter, kitchenPrinter, receiptMode);
+		}
+
 		$('#printAll').printThis({
 			importCSS: true
 		});
+		return Promise.resolve();
+	}
+
+	async function printReceiptsToConfiguredPrinters(receiptRoot, customerPrinter, kitchenPrinter, receiptMode) {
+		try {
+			if (!window.qz.websocket.isActive()) {
+				await window.qz.websocket.connect();
+			}
+
+			var stylesheet = document.getElementById('receiptPrintStyles');
+			var css = stylesheet ? stylesheet.textContent : '';
+			var printCopy = function (selector, printer) {
+				var receipts = Array.from(receiptRoot.querySelectorAll(selector));
+				if (!receipts.length) {
+					throw new Error('لم يتم العثور على محتوى الفاتورة المطلوب طباعته.');
+				}
+
+				var html = '<!doctype html><html><head><meta charset="utf-8"><style>' + css +
+					'@page{margin:0}body{margin:0;padding:0}</style></head><body>' +
+					receipts.map(function (receipt) { return receipt.outerHTML; }).join('') +
+					'</body></html>';
+
+				return window.qz.print(window.qz.configs.create(printer), [{
+					type: 'pixel',
+					format: 'html',
+					flavor: 'plain',
+					data: html
+				}]);
+			};
+
+			var printJobs = [printCopy(
+				receiptMode === 'dual' ? '.qz-receipt-client' : '.qz-receipt-general',
+				customerPrinter
+			)];
+
+			if (receiptMode === 'dual') {
+				printJobs.push(printCopy('.qz-receipt-kitchen', kitchenPrinter));
+			}
+
+			var results = await Promise.allSettled(printJobs);
+			var failedJob = results.find(function (result) { return result.status === 'rejected'; });
+			if (failedJob) {
+				throw failedJob.reason;
+			}
+		} catch (error) {
+			console.error('Unable to print receipt to configured printers.', error);
+			alert('تعذر الطباعة إلى الطابعات المحددة. تأكد من تشغيل QZ Tray وإعداد شهادة التوقيع والطابعات، ثم حاول مرة أخرى.');
+			throw error;
+		}
 	}
 
 	$('body').on('click','.close',function () {
@@ -58,7 +118,7 @@
 	});
 	$('body').on('click','.print-all',function(e){
         e.preventDefault();
-        printAllReceipts();
+        printAllReceipts().catch(function () {});
     });
 
      $('.leftmenutrigger').on('click', function(e) {
@@ -101,7 +161,7 @@
 		                $('#printArea').show();
 		                $('#printArea').html(result);
 						setTimeout(function () {
-							printAllReceipts();
+							printAllReceipts().catch(function () {});
 						}, 300);
 					},
 					error: function(xhr){

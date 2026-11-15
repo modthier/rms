@@ -1,4 +1,4 @@
-<div class="receipt-paper">
+<div class="receipt-paper" style="--receipt-font-size: {{ $receiptFontSize }}px">
     <div class="receipt-header">
         <h3 class="receipt-title">{{ ($name ?? null)?->name ?? config('app.name') }}</h3>
         <div class="receipt-meta">

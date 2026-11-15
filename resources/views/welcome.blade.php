@@ -12,7 +12,7 @@
 </head>
 <body class="bg-danger intro">
 <div class="container">  
-     <h1 class="text-warning text-center intro-title font-1 mb-5"> {{$name->name}}</h1>
+     <h1 class="text-warning text-center intro-title font-1 mb-5"> {{ $name?->name ?? config('app.name') }}</h1>
 
      <div class="inner-intro">
          

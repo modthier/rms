@@ -7,6 +7,8 @@
   <base href="./">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="qz-certificate-url" content="{{ route('qz.certificate') }}">
+  <meta name="qz-signature-url" content="{{ route('qz.signature') }}">
   <title>{{ $metaTitle ?? config('app.name') }}</title>
   <meta name="theme-color" content="#465FFF">
   @vite(['resources/css/tailadmin.css', 'resources/js/tailadmin-shell.js'])

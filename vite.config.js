@@ -7,6 +7,8 @@ export default defineConfig({
             input: [
                 'resources/sass/app.scss',
                 'resources/js/app.js',
+                'resources/js/qz-tray.js',
+                'resources/js/qz-printer-settings.js',
                 'resources/css/tailadmin.css',
                 'resources/js/tailadmin-shell.js',
             ],
