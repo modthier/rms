@@ -8,48 +8,22 @@ use App\Models\Ingredient;
 use App\Models\ItemType;
 use App\Models\Unit;
 use App\Http\Requests\ItemSearchRequest;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 use Storage;
 
 class ItemController extends Controller
 {
-    /** Cache key for menu items list. */
-    public const MENU_ITEMS_CACHE_KEY = 'menu_items';
-
-    /** Cache TTL: 1 hour. */
-    public const MENU_ITEMS_CACHE_TTL = 3600;
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $collection = Cache::remember(self::MENU_ITEMS_CACHE_KEY, self::MENU_ITEMS_CACHE_TTL, function () {
-            return Item::with(['itemType', 'ingredient', 'unit'])->orderBy('id', 'desc')->get();
-        });
-
-        $page = $request->get('page', 1);
-        $perPage = 15;
-        $items = new LengthAwarePaginator(
-            $collection->forPage($page, $perPage),
-            $collection->count(),
-            $perPage,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
+        $items = Item::with(['itemType', 'ingredient', 'unit'])
+            ->orderBy('id', 'desc')
+            ->paginate(15);
 
         return view('items.index', ['metaTitle' => 'جميع الاصناف'], compact('items'));
-    }
-
-    /**
-     * Clear menu items cache (call after item create/update/destroy).
-     */
-    protected function clearMenuItemsCache(): void
-    {
-        Cache::forget(self::MENU_ITEMS_CACHE_KEY);
     }
 
     /**
@@ -103,7 +77,6 @@ class ItemController extends Controller
         ];
 
         if (Item::create($data)) {
-            $this->clearMenuItemsCache();
             $request->session()->flash('success','تم حفظ الصنف بنجاح');
             return redirect()->route('item.index');
         }else {
@@ -179,7 +152,6 @@ class ItemController extends Controller
         ];
 
         if ($item->update($data)) {
-            $this->clearMenuItemsCache();
             $request->session()->flash('success','تم تحديث الصنف بنجاح');
             return redirect()->route('item.index');
         }else {
