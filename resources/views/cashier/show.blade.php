@@ -9,7 +9,6 @@
     $orderDate = $order->created_at;
     $orderDateFormatted = $orderDate ? $orderDate->format('Y-m-d') : '';
     $orderTimeFormatted = $orderDate ? $orderDate->format('H:i') : '';
-    $paymentName = $order->payment ? $order->payment->method : '-';
 @endphp
 
 <div class="cashier-card cashier-card--print cashier-card--flush">
@@ -25,7 +24,6 @@
                     'counter' => $counter,
                     'orderDateFormatted' => $orderDateFormatted,
                     'orderTimeFormatted' => $orderTimeFormatted,
-                    'paymentName' => $paymentName,
                     'items' => [$item],
                     'singleItem' => true,
                 ])

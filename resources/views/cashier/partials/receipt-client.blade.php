@@ -4,7 +4,6 @@
         <div class="receipt-meta">
             <div>رقم الفاتورة : {{ $counter }}</div>
             <div>نوع الطلب : {{ $order->orderType->name ?? '-' }}</div>
-            <div>طريقة الدفع : {{ $paymentName }}</div>
             <div>التاريخ : {{ $orderDateFormatted }} &nbsp; الوقت : {{ $orderTimeFormatted }}</div>
         </div>
     </div>

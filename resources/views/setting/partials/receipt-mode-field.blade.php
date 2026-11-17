@@ -62,7 +62,6 @@
                 <div class="receipt-meta">
                     <div>رقم الفاتورة : ١٢٣</div>
                     <div>نوع الطلب : سفري</div>
-                    <div>طريقة الدفع : نقداً</div>
                     <div>التاريخ : ٢٠٢٦/١١/١٥ &nbsp; الوقت : ١٢:٣٠</div>
                 </div>
             </div>

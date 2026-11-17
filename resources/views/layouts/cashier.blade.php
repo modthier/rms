@@ -54,7 +54,8 @@
 		}
 
 		$('#printAll').printThis({
-			importCSS: true
+			importCSS: true,
+			importStyle: true
 		});
 		return Promise.resolve();
 	}

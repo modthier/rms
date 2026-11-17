@@ -115,7 +115,7 @@ class ReceiptFontSizeTest extends TestCase
     {
         $role = Role::create(['role' => 'user']);
         $cashier = User::factory()->create(['role_id' => $role->id]);
-        Setting::create([
+        $setting = Setting::create([
             'name' => 'Restaurant',
             'receipt_mode' => Setting::RECEIPT_MODE_DUAL,
             'receipt_font_size' => 18,
@@ -124,16 +124,27 @@ class ReceiptFontSizeTest extends TestCase
         $item = Item::create(['name' => 'Coffee', 'price' => 2.50]);
         $payment = Payment::create(['method' => 'Cash']);
         $orderType = OrderType::create(['name' => 'Takeaway']);
-
-        $response = $this->actingAs($cashier)->post(route('cashier.store'), [
+        $orderData = [
             'items' => [$item->id => ['quantity' => 2]],
             'price'.$item->id => '5.00',
             'total' => '5.00',
             'payment_id' => $payment->id,
             'order_type_id' => $orderType->id,
-        ]);
+        ];
+
+        $response = $this->actingAs($cashier)->post(route('cashier.store'), $orderData);
 
         $response->assertOk()
-            ->assertSee('style="--receipt-font-size: 18px"', false);
+            ->assertSee('style="--receipt-font-size: 18px"', false)
+            ->assertDontSee('طريقة الدفع')
+            ->assertDontSee('Cash');
+
+        $setting->update(['receipt_mode' => Setting::RECEIPT_MODE_SINGLE]);
+        Setting::clearCache();
+
+        $singleReceiptResponse = $this->post(route('cashier.store'), $orderData);
+        $singleReceiptResponse->assertOk()
+            ->assertDontSee('طريقة الدفع')
+            ->assertDontSee('Cash');
     }
 }

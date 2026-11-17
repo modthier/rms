@@ -8,7 +8,6 @@
         'counter' => $counter,
         'orderDateFormatted' => $orderDateFormatted,
         'orderTimeFormatted' => $orderTimeFormatted,
-        'paymentName' => $paymentName,
         'items' => $items,
         'singleItem' => $singleItem,
     ];
